@@ -13,7 +13,9 @@ Once downloaded, it can be used as such:
 The default path to the Editors folder for each system is as follows:
 
 Windows: `C:\Program Files\Unity\Hub\Editor`.
+
 Mac: `/Application/Unity/Hub/Editor`.
+
 Linux: `~/Unity/Hub/Editor`
 
 Please note that in order for the template to be copied over to the ProjectTemplates folder, you will need write permissions for that folder. If it is unable to be copied,  the archive will remain in the local directory, where you can attempt to move it manually.
