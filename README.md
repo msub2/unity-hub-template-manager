@@ -14,7 +14,9 @@ This will check the default location for Unity Hub editors and copy your templat
 The default path to the Editors folder for each system is as follows:
 
 Windows: `C:\Program Files\Unity\Hub\Editor`.
+
 Mac: `/Application/Unity/Hub/Editor`.
+
 Linux: `~/Unity/Hub/Editor`
 
 You can also pass in a custom path to your Editor folder like so:
