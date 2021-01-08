@@ -1,14 +1,10 @@
 '''
-This script helps to create custom project templates for use in Unity Hub.
-
-Example usage:
-    $ python ./unity_hub_template_manager.py '/path/to/Unity/Hub/Editors' '/path/to/template/project'
-
-TODO:
-    * Identify user OS
-    * Implement default paths based on OS
+This script contains the core functionality for the Unity Hub Template Manager,
+which is designed to facilitate easier creation and management of template projects
+for use with Unity Hub.
+TODO: Test functionality, push new release when good
 '''
-__version__ = '0.2.0'
+__version__ = '0.3.0'
 
 from ctypes import windll
 from json import dumps
@@ -16,24 +12,36 @@ from os import chdir, listdir, makedirs, path, scandir, remove, rename
 from pathlib import Path
 from platform import system
 from shutil import copyfile, copytree, make_archive, rmtree
-from sys import argv, executable
+from sys import executable
 from re import match
 
 
-def verify_paths():
+default_paths = {
+    'Windows': r'C:\Program Files\Unity\Hub\Editor',
+    'Darwin': r'/Application/Unity/Hub/Editor',
+    'Linux': r'~/Unity/Hub/Editor'
+}
+
+
+def verify_paths(project=None, editors=None):
     '''
     Check that we have been given a path to the Editors folder and a path to the template project.
     If both are present and valid, return True. If not, inform the user and return False.
     '''
-    if len(argv) != 3:
-        print('Invalid number of arguments. Expecting path to Editor folder and path to template project.')
-        return False
 
-    # Check that these are valid paths
+    # Set editor path, either from default or arguments
     global editors_path
-    editors_path = Path(argv[1])
+    if not editors and project:
+        print('Only one path given. Using default path for Editors folder.')
+        editors_path = default_paths[system()]
+    else:
+        editors_path = Path(editors)
+
+    # Set project path from arguments
     global project_path
-    project_path = Path(argv[2])
+    project_path = Path(project)
+
+    # Verify both paths are valid
     if not path.isdir(editors_path):
         print('Editor path is not a valid path!')
         return False
@@ -47,26 +55,30 @@ def verify_paths():
     editor_name_pattern = r'^[0-9]+\.[0-9]+\.[0-9]+f[0-9]+'
     for f in editors_list:
         if match(editor_name_pattern, f.name) is None:
-            print('These folders do not appear to follow Unity\'s versioning pattern. Please verify you have the correct path.')
+            print('Editor folders do not appear to follow Unity\'s versioning pattern. Please verify you have the correct path.')
             return False
 
     project_folders = [f.name for f in scandir(project_path) if f.is_dir()]
     if 'Assets' not in project_folders or 'ProjectSettings' not in project_folders:
-        print('Folder is either not a valid Unity project or is missing its Assets/ProjectSettings folder(s). Please verify project is valid.')
+        print('Either not a valid Unity project or Assets/ProjectSettings folder(s) is/are missing. Please verify project is valid.')
         return False
 
     return True
 
 
 def create_template(editor=None, name=None, displayname=None, version=None, description=None):
-    '''Returns the full path to the chosen Editor's project templates folder, or None if given editor is invalid.'''
+    '''
+    Constructs path to ProjectTemplates, creates package.json, creates gzipped tarball,
+    then attempts to copy archive over to ProjectTemplates folder.
+    TODO: Fix editor variable to make sense when calling this function externally
+    '''
     if editor is None:
         # Prompt user for which version of Unity this template will be for
         choosing = True
         while choosing:
             print('Select Unity version template will be added to:')
-            for editor in editors_list:
-                print(editors_list.index(editor), '-', editor.name)
+            for e in editors_list:
+                print(editors_list.index(e), '-', e.name)
 
             choice = int(input())
             if choice >= len(editors_list) or choice < 0:
@@ -114,7 +126,7 @@ def create_template(editor=None, name=None, displayname=None, version=None, desc
         package_json['description'] = input('Enter description: ')
     else:
         print('This function should only be called with 1 or 5 valid arguments. Stopping program.')
-        print(name, displayname, version, description)
+        print('Given', name, displayname, version, description)
         quit()
     package_json['unity'] = unity_version
 
@@ -149,10 +161,3 @@ def create_template(editor=None, name=None, displayname=None, version=None, desc
                 print(
                     'File not copied. You may not have write permissions to templates folder.')
                 print('You can still attempt to copy the archive over manually.')
-
-
-if __name__ == "__main__":
-    if verify_paths():
-        create_template()
-    else:
-        print('Paths could not be verified.')
