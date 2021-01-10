@@ -1,21 +1,19 @@
 # Unity Hub Template Manager
 
 The Unity Hub Template Manager is intended to provide a more streamlined way of creating template projects to use in Unity Hub.
-It is currently CLI only, but a GUI is planned soon.
 
 ## Usage
 
-To use the Unity Hub Template Manager, download the latest release for your system (note: currently Windows only. Mac and Linux soon).
-Once downloaded, it can be used as such:
+To use the Unity Hub Template Manager, download the latest release for your system. Once downloaded, it can be used as such:
 
 `./UHTM.exe '/path/to/template/project'`
 
 This will check the default location for Unity Hub editors and copy your template to the selected one at that location.
 The default path to the Editors folder for each system is as follows:
 
-Windows: `C:\Program Files\Unity\Hub\Editor`.
+Windows: `C:\Program Files\Unity\Hub\Editor`
 
-Mac: `/Application/Unity/Hub/Editor`.
+Mac: `/Application/Unity/Hub/Editor`
 
 Linux: `~/Unity/Hub/Editor`
 
