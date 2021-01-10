@@ -1,10 +1,11 @@
 import uhtm
+import gui
 from sys import argv
 
 if __name__ == "__main__":
     if len(argv) == 1:
         # Launch GUI
-        print('The GUI for this program has not yet been implemented.')
+        gui.display()
     elif len(argv) == 2:
         # User intends to use program via CLI with default Editor path
         if uhtm.verify_paths(argv[1]):

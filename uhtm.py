@@ -3,7 +3,7 @@ This script contains the core functionality for the Unity Hub Template Manager,
 which is designed to facilitate easier creation and management of template projects
 for use with Unity Hub.
 '''
-__version__ = '0.3.1'
+__version__ = '0.4.0'
 
 from json import dumps
 from os import chdir, listdir, makedirs, path, scandir, remove, rename
@@ -31,7 +31,7 @@ def verify_paths(project=None, editors=None):
     global editors_path
     if not editors and project:
         print('Only one path given. Using default path for Editors folder.')
-        editors_path = default_paths[system()]
+        editors_path = get_default_path()
     else:
         editors_path = Path(editors)
 
@@ -64,11 +64,14 @@ def verify_paths(project=None, editors=None):
     return True
 
 
-def create_template(editor=None, name=None, displayname=None, version=None, description=None):
+def get_default_path():
+    return default_paths[system()]
+
+
+def create_template(editor=None, package=None, unity_version=None):
     '''
     Constructs path to ProjectTemplates, creates package.json, creates gzipped tarball,
-    then attempts to copy archive over to ProjectTemplates folder.
-    TODO: Fix editor variable to make sense when calling this function externally
+    then attempts to copy archive over to ProjectTemplates folder.    
     '''
     if editor is None:
         # Prompt user for which version of Unity this template will be for
@@ -89,10 +92,12 @@ def create_template(editor=None, name=None, displayname=None, version=None, desc
         templates_path = path.join(
             editors_list[choice].path, r'Editor\Data\Resources\PackageManager\ProjectTemplates')
 
-    elif Path.is_dir(editor.path):
-        unity_version = editor.name
+    elif Path.is_dir(Path(editor)):
+        '''TODO: Get editor selection from user in GUI'''
+        unity_version = unity_version
+        print(unity_version)
         templates_path = path.join(
-            editor.path, r'Editor\Data\Resources\PackageManager\ProjectTemplates')
+            Path(editor), unity_version, r'Editor\Data\Resources\PackageManager\ProjectTemplates')
 
     else:
         print('Invalid Editor!')
@@ -112,19 +117,19 @@ def create_template(editor=None, name=None, displayname=None, version=None, desc
         "description": "",
         "dependencies": {}
     }
-    if name and displayname and version and description:
-        package_json['name'] = name
-        package_json['displayName'] = displayname
-        package_json['version'] = version
-        package_json['description'] = description
-    elif not name and not displayname and not version and not description:
+    if package is None:
         package_json['name'] = input('Enter filename: ')
         package_json['displayName'] = input('Enter display name: ')
         package_json['version'] = input('Enter version number: ')
         package_json['description'] = input('Enter description: ')
+    elif package[0] and package[1] and package[2] and package[3]:
+        package_json['name'] = package[0]
+        package_json['displayName'] = package[1]
+        package_json['version'] = package[2]
+        package_json['description'] = package[3]
     else:
         print('This function should only be called with 1 or 5 valid arguments. Stopping program.')
-        print('Given', name, displayname, version, description)
+        print('Given', package[0], package[1], package[2], package[3])
         quit()
     package_json['unity'] = unity_version
 
