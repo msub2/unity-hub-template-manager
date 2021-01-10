@@ -3,7 +3,7 @@ This script contains the core functionality for the Unity Hub Template Manager,
 which is designed to facilitate easier creation and management of template projects
 for use with Unity Hub.
 '''
-__version__ = '0.4.0'
+__version__ = '1.0.0'
 
 from json import dumps
 from os import chdir, listdir, makedirs, path, scandir, remove, rename
