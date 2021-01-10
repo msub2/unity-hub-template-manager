@@ -4,7 +4,7 @@ The Unity Hub Template Manager is intended to provide a more streamlined way of 
 
 ## Usage
 
-To use the Unity Hub Template Manager, download the latest release for your system. Once downloaded, it can be used as such:
+To use the Unity Hub Template Manager, download the latest release for your system. Once downloaded, simply double-click to launch the GUI, or run it from a terminal like so:
 
 `./UHTM.exe '/path/to/template/project'`
 
